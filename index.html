@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Проверка благотворительных сборов РК</title>
+    <title>Truecheck — Проверка благотворительных сборов РК</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
 
     <div class="max-w-xl w-full mx-auto px-4 py-12 flex-grow">
         <header class="text-center mb-10">
-            <h1 class="text-3xl font-bold tracking-tight mb-2">Проверка сборов 🇰🇿</h1>
+            <h1 class="text-3xl font-bold tracking-tight mb-2">Truecheck 🇰🇿</h1>
             <p class="text-slate-400 text-sm">Введи номер карты, ИИН или имя автора сбора из TikTok, чтобы проверить его по базе.</p>
         </header>
 
@@ -18,7 +18,7 @@
             <div class="space-y-4">
                 <div>
                     <label for="searchInput" class="block text-xs font-medium uppercase tracking-wider text-slate-400 mb-2">Реквизиты или данные</label>
-                    <input type="text" id="searchInput" placeholder="Например: 4400 4300... или ИИН" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition">
+                    <input type="text" id="searchInput" placeholder="Например: 4400 4300... или Гульнур" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-emerald-500 transition">
                 </div>
                 <button onclick="checkData()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-xl transition duration-200">Проверить сбор</button>
             </div>
@@ -37,28 +37,32 @@
     </div>
 
     <footer class="text-center py-6 text-xs text-slate-600 border-t border-slate-900">
-        Проект социальной безопасности Казахстана
+        Truecheck — Проект социальной безопасности Казахстана
     </footer>
 
     <script>
         const database = [
             { query: "4400430011112222", status: "scam", title: "Внимание: Черный список", text: "Этот номер карты зафиксирован в жалобах. Мошенники используют украденные фото ребенка." },
+            { query: "4003035126883673", status: "scam", title: "Внимание: Требует проверки", text: "Сбор средств распространяется в TikTok на личную карту. Официальный расчетный фонд не указан." },
             { query: "990101300000", status: "scam", title: "Внимание: Черный список", text: "ИИН принадлежит лицу, замешанному в фейковых сборах на лечение." },
+            { query: "гульнуркарабасова", status: "scam", title: "Внимание: Сомнительный сбор", text: "Сбор на имя Гульнур Карабасовой с переводом на личные карты Kaspi. Проверяйте наличие официальных документов из клиник." },
             { query: "доброум", status: "trusted", title: "Проверенный фонд", text: "Официально зарегистрированный благотворительный фонд в Казахстане. Рекомендуем." },
             { query: "ayala", status: "trusted", title: "Проверенный фонд", text: "Благотворительный фонд «Аяла». Полная отчетность и прозрачность." }
         ];
 
         function checkData() {
-            const rawInput = document.getElementById('searchInput').value.trim().toLowerCase().replace(/\s+/g, '');
+            const rawInput = document.getElementById('searchInput').value.trim().toLowerCase();
+            const cleanInput = rawInput.replace(/\s+/g, '');
             const resultBox = document.getElementById('resultContainer');
             
-            if (!rawInput) {
+            if (!cleanInput) {
                 resultBox.className = "rounded-2xl p-6 border bg-amber-950/40 border-amber-800/60 text-amber-200 block";
                 resultBox.innerHTML = "<h3 class='font-bold mb-1'>Пустое поле</h3><p class='text-sm opacity-90'>Введите номер карты или данные для проверки.</p>";
                 return;
             }
 
-            const found = database.find(item => rawInput.includes(item.query));
+            // Ищем совпадение по очищенному тексту (без пробелов) или обычному вводу
+            const found = database.find(item => cleanInput.includes(item.query) || rawInput.includes(item.query) || item.query.includes(cleanInput));
 
             if (found) {
                 if (found.status === 'scam') {
@@ -76,3 +80,4 @@
     </script>
 </body>
 </html>
+
